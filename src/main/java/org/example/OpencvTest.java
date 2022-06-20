@@ -1,6 +1,6 @@
 package org.example;
 
-import org.example.utils.ClassLoaderUtil;
+import org.example.utils.ResourceUtil;
 import org.example.view.DisplayWindow;
 
 import org.opencv.core.Mat;
@@ -9,18 +9,9 @@ import org.opencv.imgcodecs.Imgcodecs;
 import org.opencv.objdetect.CascadeClassifier;
 
 import java.io.IOException;
-import java.net.URISyntaxException;
 
 public class OpencvTest {
-    public static String rPath;
-
-    static {
-        try {
-            rPath = ClassLoaderUtil.getResource("resources/");
-        } catch (URISyntaxException e) {
-            throw new RuntimeException(e);
-        }
-    }
+    private static final String rPath = ResourceUtil.getResourcePath("resources/");
 
     public static int FaceDetection(String imgFile) {
         // Read the image from the file storing it in to a matrix object
@@ -36,7 +27,7 @@ public class OpencvTest {
         System.out.println(":::::::::::::::::");
         return facesDetected.toArray().length;
     }
-    public static void main( String[] args ) throws IOException, URISyntaxException {
+    public static void main( String[] args ) throws IOException {
         nu.pattern.OpenCV.loadLocally();
         String imgFile = rPath +  "group1.jpg";
         int qtdFaces = FaceDetection(imgFile);
