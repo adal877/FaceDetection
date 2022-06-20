@@ -9,7 +9,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 
-public class DisplayWindow extends JFrame implements KeyListener {
+public class DisplayWindow extends JFrame {
 //    private static final DisplayWindow instance = new DisplayWindow();
     private JLabel lbl;
     private ImageIcon icon;
@@ -80,6 +80,19 @@ public class DisplayWindow extends JFrame implements KeyListener {
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.addKeyListener(new KeyListener() {
+            @Override
+            public void keyTyped(KeyEvent evt) {
+                if(evt.getKeyChar() == 'q' ||
+                        evt.getKeyChar() == ' ') {
+                    System.exit(0);
+                }
+            }
+            @Override
+            public void keyPressed(KeyEvent e) {}
+            @Override
+            public void keyReleased(KeyEvent e) {}
+        });
     }
     public void DisplayImg(String imgPath) throws IOException {
         this.imgPath = imgPath;
@@ -97,22 +110,6 @@ public class DisplayWindow extends JFrame implements KeyListener {
         frame.repaint();
         frame.add(lbl);
     }
-    @Override
-    public void keyTyped(KeyEvent evt) {
-        System.out.println("Key pressed ::::: ");
-        System.out.println(evt.getKeyCode());
-        System.out.println(evt.getKeyChar());
-        System.out.println(":::::::::::::::::::");
-        if(evt.getKeyCode() == KeyEvent.VK_SPACE ||
-                evt.getKeyCode() == KeyEvent.VK_ESCAPE) {
-            System.exit(0);
-        }
-    }
-    @Override
-    public void keyPressed(KeyEvent e) {}
-    @Override
-    public void keyReleased(KeyEvent e) {}
-
     public int getImgWidth() {
         return imgWidth;
     }
