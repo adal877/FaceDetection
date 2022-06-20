@@ -22,18 +22,13 @@ public class OpencvTest {
         // Detect the face(s)
         MatOfRect facesDetected = new MatOfRect();
         classifier.detectMultiScale(srcImg, facesDetected);
-        System.out.println("::::: Faces :::::");
-        System.out.println(facesDetected);
-        System.out.println(":::::::::::::::::");
         return facesDetected.toArray().length;
     }
     public static void main( String[] args ) throws IOException {
         nu.pattern.OpenCV.loadLocally();
         String imgFile = rPath +  "group1.jpg";
         int qtdFaces = FaceDetection(imgFile);
-        System.out.printf("Detected %s face(s)!", qtdFaces);
         String frameText = "Detected " + qtdFaces + " faces!";
-
-        DisplayWindow.getInstance(frameText).DisplayImg(imgFile);
+        DisplayWindow.getInstance().DisplayImg(imgFile, frameText);
     }
 }

@@ -27,14 +27,8 @@ public class DisplayWindow extends JFrame {
      * Cut off the need to make an object instance
      * just to use the constructor.
      */
-    public static DisplayWindow getInstance(String text) {
-        return new DisplayWindow(text);
-    }
     public static DisplayWindow getInstance() {
         return new DisplayWindow();
-    }
-    public static DisplayWindow getInstance(int width, int height, String text) {
-        return new DisplayWindow(width, height, text);
     }
     public DisplayWindow(int width, int height, String text) {
         setImgWidth(width);
@@ -60,24 +54,28 @@ public class DisplayWindow extends JFrame {
      * Creates the default window.
      */
     private void drawWindow(int width, int height) {
-        setPositionX(2);
-        setPositionY(2);
+        setPositionX(getImgWidth()/2);
+        setPositionY(getImgHeight()/2);
         frame = new JFrame();
-        lbl = new JLabel() {
-            protected void paintComponent(Graphics g) {
-                super.paintComponent(g);
-                Color c = new Color(0xFFFFFF);
-                g.setColor(c);
-                g.fillRect(getPositionX(), getPositionY(), getOnFrameText().length()*8, 20);
-                Color c2 = new Color(0);
-                g.setColor(c2);
-                g.drawString(getOnFrameText(), getPositionX()+8, getPositionY()+14); //these are x and y positions
-                g.drawRect(getPositionX()-1, getPositionY()-1, (getOnFrameText().length()*8)+1, 21);
-            }
-        };
+        if(getOnFrameText() == "") {
+            lbl = new JLabel() {
+                protected void paintComponent(Graphics g) {
+                    super.paintComponent(g);
+                    Color c = new Color(0xFFFFFF);
+                    g.setColor(c);
+                    g.fillRect(getPositionX(), getPositionY(), (getOnFrameText().length()*7)+4, 20);
+                    Color c2 = new Color(0);
+                    g.setColor(c2);
+                    g.drawString(getOnFrameText(), getPositionX() + 8, getPositionY() + 14); //these are x and y
+                    // positions
+                    g.drawRect(getPositionX() - 1, getPositionY() - 1, (getOnFrameText().length()*7)+4, 21);
+                }
+            };
+        } else {
+            lbl = new JLabel();
+        }
         frame.setLayout(new FlowLayout());
         frame.setSize(width, height);
-        frame.setLocationRelativeTo(null);
         frame.setVisible(true);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.addKeyListener(new KeyListener() {
@@ -94,8 +92,9 @@ public class DisplayWindow extends JFrame {
             public void keyReleased(KeyEvent e) {}
         });
     }
-    public void DisplayImg(String imgPath) throws IOException {
+    public void DisplayImg(String imgPath, String text) throws IOException {
         this.imgPath = imgPath;
+        setOnFrameText(text);
         img = ImageIO.read(new File(imgPath));
         icon = new ImageIcon(img);
         /*
@@ -105,10 +104,10 @@ public class DisplayWindow extends JFrame {
             setImgHeight(img.getHeight());
             setImgWidth(img.getWidth());
         }
-        lbl.setIcon(icon);
         frame.setSize(getImgWidth(), getImgHeight());
-        frame.repaint();
+        lbl.setIcon(icon);
         frame.add(lbl);
+        frame.setLocationRelativeTo(null);
     }
     public int getImgWidth() {
         return imgWidth;
@@ -126,7 +125,7 @@ public class DisplayWindow extends JFrame {
         return isDefaultValue;
     }
     private void setOnFrameText(String OnFrameText) {
-        this.OnFrameText = OnFrameText;
+        this.OnFrameText = " " + OnFrameText + " ";
     }
     private String getOnFrameText() {
         return OnFrameText;
