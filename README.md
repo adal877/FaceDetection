@@ -20,7 +20,7 @@ Use the maven on Intellij to download the opencv, compile and run.
 in case something goes wrong, try to run the code below and then try<br/>
 to run the maven plugin again:<br/>
 `
-mvn compile exec:java -Dexec.mainClass="org.OpencvTest.OpencvTest.java"
+mvn compile exec:java -Dexec.mainClass="org.OpencvTest.OpencvTest"
 `
 
 ## Example output
