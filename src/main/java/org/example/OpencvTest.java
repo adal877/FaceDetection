@@ -39,13 +39,17 @@ public class OpencvTest {
     public static void main( String[] args ) throws IOException {
         nu.pattern.OpenCV.loadLocally();
         String imgFile = rPath +  "group1.jpg";
+        // Rect[] matFaces = OpencvTest.getInstance().FaceDetection(imgFile);
+        // matFaces.length();
         int qtdFaces = OpencvTest.getInstance().FaceDetection(imgFile);
         String frameTextOutput = "Detected " + qtdFaces + " faces!";
         String frameTextBase = "Resource/base image";
+
         DisplayWindow dw = new DisplayWindow();
         dw.DisplayImg(imgFile, frameTextBase);
-        ImgFileUtil.getInstance().DrawRectOnFaces(dw, frameTextOutput,
-                                          rPath + "faces-tagged.png",
-                                                  getInstance().mat);
+        dw.DisplayImg(imgFile, frameTextBase + "Test");
+//        ImgFileUtil.getInstance().DrawRectOnFaces(dw, frameTextOutput,
+//                                          rPath + "faces-tagged.png",
+//                                                  getInstance().mat);
     }
 }

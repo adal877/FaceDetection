@@ -16,7 +16,7 @@ public class DisplayWindow extends JFrame {
 //    private static final DisplayWindow instance = new DisplayWindow();
     private JLabel lbl;
     private ImageIcon icon;
-    private static JFrame frame;
+    private JFrame frame;
     private String imgPath = "";
     private BufferedImage img;
     private int imgWidth;
@@ -86,10 +86,14 @@ public class DisplayWindow extends JFrame {
             public void keyTyped(KeyEvent evt) {
                 if(evt.getKeyChar() == 'q' ||
                         evt.getKeyChar() == ' ') {
-                    System.exit(0);
+                    int opt = JOptionPane.showConfirmDialog(null, "Would you like to exit?", "Exit",
+                            JOptionPane.YES_NO_OPTION);
+                    if(opt != 1) {
+                        System.exit(0);
+                    }
                 }
                 if(evt.getKeyChar() == 'd') {
-                    JOptionPane.showMessageDialog(null, "The image will be deleted on program finish...");
+                    JOptionPane.showMessageDialog(null, "The image will be deleted on program exit...");
                     ImgFileUtil.getInstance().deleteFileOnExit(new File(OpencvTest.rPath + ImgFileUtil.imgName));
                 }
             }
