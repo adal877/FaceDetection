@@ -1,5 +1,8 @@
 package org.example.view;
 
+import org.example.OpencvTest;
+import org.example.utils.ImgFileUtil;
+
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
@@ -13,7 +16,7 @@ public class DisplayWindow extends JFrame {
 //    private static final DisplayWindow instance = new DisplayWindow();
     private JLabel lbl;
     private ImageIcon icon;
-    private JFrame frame;
+    private static JFrame frame;
     private String imgPath = "";
     private BufferedImage img;
     private int imgWidth;
@@ -54,8 +57,8 @@ public class DisplayWindow extends JFrame {
      * Creates the default window.
      */
     private void drawWindow(int width, int height) {
-        setPositionX(getImgWidth()/2);
-        setPositionY(getImgHeight()/2);
+        setPositionX(3);
+        setPositionY(3);
         frame = new JFrame();
         if(getOnFrameText() == "") {
             lbl = new JLabel() {
@@ -66,7 +69,7 @@ public class DisplayWindow extends JFrame {
                     g.fillRect(getPositionX(), getPositionY(), (getOnFrameText().length()*7)+4, 20);
                     Color c2 = new Color(0);
                     g.setColor(c2);
-                    g.drawString(getOnFrameText(), getPositionX() + 8, getPositionY() + 14); //these are x and y
+                    g.drawString(getOnFrameText(), getPositionX() + 8, getPositionY() + 14);
                     // positions
                     g.drawRect(getPositionX() - 1, getPositionY() - 1, (getOnFrameText().length()*7)+4, 21);
                 }
@@ -85,12 +88,27 @@ public class DisplayWindow extends JFrame {
                         evt.getKeyChar() == ' ') {
                     System.exit(0);
                 }
+                if(evt.getKeyChar() == 'd') {
+                    JOptionPane.showMessageDialog(null, "The image will be deleted on program finish...");
+                    ImgFileUtil.getInstance().deleteFileOnExit(new File(OpencvTest.rPath + ImgFileUtil.imgName));
+                }
             }
             @Override
             public void keyPressed(KeyEvent e) {}
             @Override
             public void keyReleased(KeyEvent e) {}
         });
+    }
+    public void DrawRectOnFace(final int x, final int y, final int sizeX, final int sizeY) {
+        JLabel rect = new JLabel() {
+            protected void paintComponent(Graphics g) {
+                super.paintComponent(g);
+                Color c = new Color(0xFF09FF00, true);
+                g.setColor(c);
+                g.drawRect(x, y, sizeX, sizeY);
+            }
+        };
+        frame.add(rect);
     }
     public void DisplayImg(String imgPath, String text) throws IOException {
         this.imgPath = imgPath;
@@ -148,5 +166,8 @@ public class DisplayWindow extends JFrame {
 
     private void setPositionY(int positionY) {
         this.positionY = positionY;
+    }
+    public String getImgPath() {
+        return imgPath;
     }
 }
