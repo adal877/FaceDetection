@@ -1,19 +1,13 @@
 package org.example.view;
 
-import org.example.OpencvTest;
-import org.example.utils.ImgFileUtil;
-
-import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
 
 public class DisplayWindow extends JFrame {
-//    private static final DisplayWindow instance = new DisplayWindow();
+    private static final DisplayWindow instance = new DisplayWindow();
     private JLabel lbl;
     private ImageIcon icon;
     private JFrame frame;
@@ -31,36 +25,16 @@ public class DisplayWindow extends JFrame {
      * just to use the constructor.
      */
     public static DisplayWindow getInstance() {
-        return new DisplayWindow();
-    }
-    public DisplayWindow(int width, int height, String text) {
-        setImgWidth(width);
-        setImgHeight(height);
-        setOnFrameText(text);
-        drawWindow(getImgWidth(), getImgHeight());
-    }
-
-    public DisplayWindow() {
-        setIsDefaultValue(true);
-        setImgWidth(0);
-        setImgHeight(0);
-        drawWindow(getImgWidth(), getImgHeight());
-    }
-    public DisplayWindow(String text) {
-        setIsDefaultValue(true);
-        setImgWidth(0);
-        setImgHeight(0);
-        setOnFrameText(text);
-        drawWindow(getImgWidth(), getImgHeight());
+        return instance;
     }
     /*
      * Creates the default window.
      */
-    private void drawWindow(int width, int height) {
-        setPositionX(3);
-        setPositionY(3);
-        frame = new JFrame();
-        if(getOnFrameText() == "") {
+    public void setupNewWindow() {
+        // Position for the rectangle label on the frame.
+        setPositionX(10);
+        setPositionY(10);
+        if(getOnFrameText() != "") {
             lbl = new JLabel() {
                 protected void paintComponent(Graphics g) {
                     super.paintComponent(g);
@@ -77,8 +51,8 @@ public class DisplayWindow extends JFrame {
         } else {
             lbl = new JLabel();
         }
+        frame = new JFrame();
         frame.setLayout(new FlowLayout());
-        frame.setSize(width, height);
         frame.setVisible(true);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.addKeyListener(new KeyListener() {
@@ -94,7 +68,6 @@ public class DisplayWindow extends JFrame {
                 }
                 if(evt.getKeyChar() == 'd') {
                     JOptionPane.showMessageDialog(null, "The image will be deleted on program exit...");
-                    ImgFileUtil.getInstance().deleteFileOnExit(new File(OpencvTest.rPath + ImgFileUtil.imgName));
                 }
             }
             @Override
@@ -103,50 +76,29 @@ public class DisplayWindow extends JFrame {
             public void keyReleased(KeyEvent e) {}
         });
     }
-    public void DrawRectOnFace(final int x, final int y, final int sizeX, final int sizeY) {
-        JLabel rect = new JLabel() {
-            protected void paintComponent(Graphics g) {
-                super.paintComponent(g);
-                Color c = new Color(0xFF09FF00, true);
-                g.setColor(c);
-                g.drawRect(x, y, sizeX, sizeY);
-            }
-        };
-        frame.add(rect);
-    }
-    public void DisplayImg(String imgPath, String text) throws IOException {
-        this.imgPath = imgPath;
-        setOnFrameText(text);
-        img = ImageIO.read(new File(imgPath));
+    public void setBackgroundImage(BufferedImage img) {
         icon = new ImageIcon(img);
-        /*
-         * Assumes the image dimensions as values for the window.
-         */
-        if(isDefaultValue) {
-            setImgHeight(img.getHeight());
-            setImgWidth(img.getWidth());
-        }
-        frame.setSize(getImgWidth(), getImgHeight());
         lbl.setIcon(icon);
+        frame.setSize(img.getWidth(), img.getHeight());
         frame.add(lbl);
         frame.setLocationRelativeTo(null);
     }
-    public int getImgWidth() {
+    public int getFrameWidth() {
         return imgWidth;
     }
-    private void setImgWidth(int imgWidth) {
+    public void setFrameWidth(int imgWidth) {
         this.imgWidth = imgWidth;
     }
-    public int getImgHeight() {
+    public int getFrameHeight() {
         return imgHeight;
     }
-    private void setImgHeight(int imgHeight) {
+    public void setFrameHeight(int imgHeight) {
         this.imgHeight = imgHeight;
     }
     private Boolean getIsDefaultValue() {
         return isDefaultValue;
     }
-    private void setOnFrameText(String OnFrameText) {
+    public void setOnFrameText(String OnFrameText) {
         this.OnFrameText = " " + OnFrameText + " ";
     }
     private String getOnFrameText() {
@@ -174,4 +126,5 @@ public class DisplayWindow extends JFrame {
     public String getImgPath() {
         return imgPath;
     }
+    public void setImgPath(String path) { imgPath = path;}
 }
