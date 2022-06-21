@@ -22,9 +22,8 @@ public class OpencvTest {
         String imgFile = rPath +  "group1.jpg";
 
         Rect[] matFaces = OpencvUtil.getInstance().FaceDetection(imgFile);
-//        String frameTextOutput = "Detected " + matFaces.length + " faces!";
+        String frameTextOutput = "Detected " + matFaces.length + " faces!";
 
-        String frameTextOutput = "Detected " + matFaces.length + " idiots on this image";
         OpencvUtil.getInstance().DrawRectOnFaces(matFaces, imgFile, frameTextOutput);
     }
 }
