@@ -1,10 +1,17 @@
 package org.example.view;
 
+import org.example.utils.OpencvUtil;
+import org.example.utils.ResourceUtil;
+import org.example.utils.WindowUtil;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.event.MouseWheelEvent;
+import java.awt.event.MouseWheelListener;
 import java.awt.image.BufferedImage;
+import java.io.IOException;
 
 public class DisplayWindow extends JFrame {
     private static final DisplayWindow instance = new DisplayWindow();
@@ -19,6 +26,11 @@ public class DisplayWindow extends JFrame {
     private String OnFrameText = "";
     private int positionX = 0;
     private int positionY = 0;
+    private final Boolean IsVisible;
+    public DisplayWindow() {
+        IsVisible = false;
+        setupNewWindow();
+    }
     /*
      * Makes an instance of it self.
      * Cut off the need to make an object instance
@@ -31,33 +43,14 @@ public class DisplayWindow extends JFrame {
      * Creates the default window.
      */
     public void setupNewWindow() {
-        // Position for the rectangle label on the frame.
-        setPositionX(10);
-        setPositionY(10);
-        if(getOnFrameText() != "") {
-            lbl = new JLabel() {
-                protected void paintComponent(Graphics g) {
-                    super.paintComponent(g);
-                    Color c = new Color(0xFFFFFF);
-                    g.setColor(c);
-                    g.fillRect(getPositionX(), getPositionY(), (getOnFrameText().length()*7)+4, 20);
-                    Color c2 = new Color(0);
-                    g.setColor(c2);
-                    g.drawString(getOnFrameText(), getPositionX() + 8, getPositionY() + 14);
-                    // positions
-                    g.drawRect(getPositionX() - 1, getPositionY() - 1, (getOnFrameText().length()*7)+4, 21);
-                }
-            };
-        } else {
-            lbl = new JLabel();
-        }
         frame = new JFrame();
         frame.setLayout(new FlowLayout());
-        frame.setVisible(true);
+        frame.setVisible(IsVisible);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.addKeyListener(new KeyListener() {
             @Override
             public void keyTyped(KeyEvent evt) {
+                System.out.println(evt.getKeyChar());
                 if(evt.getKeyChar() == 'q' ||
                         evt.getKeyChar() == ' ') {
                     int opt = JOptionPane.showConfirmDialog(null, "Would you like to exit?", "Exit",
@@ -69,14 +62,63 @@ public class DisplayWindow extends JFrame {
                 if(evt.getKeyChar() == 'd') {
                     JOptionPane.showMessageDialog(null, "The image will be deleted on program exit...");
                 }
+                if (evt.getKeyChar() == 'j') {
+                    setPositionY(-2);
+                    frame.repaint();
+                }
+                if(evt.getKeyChar() == 'k') {
+                    setPositionY(2);
+                    frame.repaint();
+                }
             }
             @Override
             public void keyPressed(KeyEvent e) {}
             @Override
             public void keyReleased(KeyEvent e) {}
         });
+        frame.addMouseWheelListener(new MouseWheelListener() {
+            @Override
+            public void mouseWheelMoved(MouseWheelEvent event) {
+                if (!event.isShiftDown()) {
+                    setPositionY(5);
+                } else {
+                    setPositionY(-5);
+                }
+            }
+        });
+    }
+    public void setBackgroundImage(BufferedImage img, int textX, int textY) {
+        // Position for the rectangle label on the frame.
+        setPositionX(textX);
+        setPositionY(textY);
+        BackgroundImage(img);
     }
     public void setBackgroundImage(BufferedImage img) {
+        // Position for the rectangle label on the frame.
+        setPositionX(10);
+        setPositionY(10);
+        BackgroundImage(img);
+    }
+    public void BackgroundImage(BufferedImage img) {
+        setIsVisible(true);
+        if(getOnFrameText() != "") {
+        lbl = new JLabel() {
+            protected void paintComponent(Graphics g) {
+                super.paintComponent(g);
+                Color c = new Color(0xFFFFFF);
+                g.setColor(c);
+                g.fillRect(getPositionX(), getPositionY(), (getOnFrameText().length()*7)+4, 20);
+                Color c2 = new Color(0);
+                g.setColor(c2);
+                g.drawString(getOnFrameText(), getPositionX()+8, getPositionY()+14);
+                // positions
+                g.drawRect(getPositionX(), getPositionY(), (getOnFrameText().length()*7)+4, 21);
+            }
+        };
+            System.out.println(getOnFrameText());
+    } else {
+        lbl = new JLabel();
+    }
         icon = new ImageIcon(img);
         lbl.setIcon(icon);
         frame.setSize(img.getWidth(), img.getHeight());
@@ -127,4 +169,7 @@ public class DisplayWindow extends JFrame {
         return imgPath;
     }
     public void setImgPath(String path) { imgPath = path;}
+    public void setIsVisible(Boolean IsVisible) {
+        frame.setVisible(IsVisible);
+    }
 }

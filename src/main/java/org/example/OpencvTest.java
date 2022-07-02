@@ -3,27 +3,39 @@ package org.example;
 import org.example.utils.OpencvUtil;
 import org.example.utils.ResourceUtil;
 
-import org.opencv.core.Mat;
-import org.opencv.core.MatOfRect;
+import org.example.view.DisplayWindow;
 import org.opencv.core.Rect;
-import org.opencv.imgcodecs.Imgcodecs;
-import org.opencv.objdetect.CascadeClassifier;
 
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.IOException;
 
 public class OpencvTest {
-    private static final OpencvTest instance = new OpencvTest();
-    public static OpencvTest getInstance() {
-        return instance;
-    }
     public static final String rPath = ResourceUtil.getResourcePath("resources/Assets/");
     public static void main( String[] args ) throws IOException {
         nu.pattern.OpenCV.loadLocally();
-        String imgFile = rPath +  "group1.jpg";
+        String imgFile = rPath +  "group7.jpg";
+        BufferedImage img = ImageIO.read(new File(imgFile));
 
         Rect[] matFaces = OpencvUtil.getInstance().FaceDetection(imgFile);
-        String frameTextOutput = "Detected " + matFaces.length + " faces!";
+        Rect[] matEyes = OpencvUtil.getInstance().EyeDetection(imgFile);
+        String frameTextOutput = "Detected " + matFaces .length + " faces!";
+        // https://github.com/opencv/opencv/tree/master/data/haarcascades
 
-        OpencvUtil.getInstance().DrawRectOnFaces(matFaces, imgFile, frameTextOutput);
+        DisplayWindow dwFaces = new DisplayWindow();
+        dwFaces.setFrameHeight(img.getHeight());
+        dwFaces.setFrameWidth(img.getWidth());
+        dwFaces.setOnFrameText(frameTextOutput);
+        BufferedImage imgFaces = OpencvUtil.getInstance().DrawRectOnDetections(matFaces, img, dwFaces);
+        System.out.println(dwFaces.getFrameHeight());
+        dwFaces.setBackgroundImage(imgFaces, 10, dwFaces.getFrameHeight()-75);
+
+        DisplayWindow dwEyes = new DisplayWindow();
+        dwEyes.setFrameHeight(img.getHeight());
+        dwEyes.setFrameWidth(img.getWidth());
+        dwEyes.setOnFrameText(matEyes.length + " eye" + "(s) detected!");
+        BufferedImage imgEyes = OpencvUtil.getInstance().DrawRectOnDetections(matEyes, img, dwEyes);
+//        dwEyes.setBackgroundImage(imgEyes);
     }
 }

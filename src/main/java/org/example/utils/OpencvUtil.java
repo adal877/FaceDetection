@@ -8,10 +8,12 @@ import org.opencv.imgcodecs.Imgcodecs;
 import org.opencv.objdetect.CascadeClassifier;
 
 import javax.imageio.ImageIO;
+import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.nio.Buffer;
 
 public class OpencvUtil {
     public static final String rPath = ResourceUtil.getResourcePath("resources/Assets/xml");
@@ -30,29 +32,41 @@ public class OpencvUtil {
         classifier.detectMultiScale(srcImg, facesDetected);
         return facesDetected.toArray();
     }
-    public void DrawRectOnFaces(Rect[] mat, String imageFile, String OnFrameText) throws IOException {
-        BufferedImage img = ImageIO.read(new File(imageFile));
-        DisplayWindow dw = new DisplayWindow();
-        dw.setOnFrameText(OnFrameText);
-        dw.setImgPath(imageFile);
-        dw.setFrameHeight(img.getHeight());
-        dw.setFrameWidth(img.getWidth());
+    public Rect[] EyeDetection(String imgFile) {
+        // Read the image from the file storing it in to a matrix object
+        Mat srcImg = Imgcodecs.imread(imgFile);
+        // Make an instance of the CascadeClassifier
+        String xmlEye = rPath + "haarcascade_eye.xml";
+        CascadeClassifier classifier = new CascadeClassifier(xmlEye);
+        // Detect the face(s)
+        MatOfRect eyesDetected = new MatOfRect();
+        classifier.detectMultiScale(srcImg, eyesDetected);
+        return eyesDetected.toArray();
+    }
+    public BufferedImage DrawRectOnDetections(Rect[] mat, BufferedImage imageFile, DisplayWindow dw) throws IOException {
+        return DrawDetection(mat, imageFile, dw);
+    }
+
+    private BufferedImage DrawDetection(Rect[] mat, BufferedImage img, DisplayWindow dw) throws IOException {
         final BufferedImage image = new BufferedImage ( dw.getFrameWidth(), dw.getFrameHeight(),
                 BufferedImage.TYPE_INT_ARGB );
-        final Graphics2D graphics2D = image.createGraphics ();
-        graphics2D.drawImage((Image)img, 0, 0, dw);
-        for(Rect matt : mat) {
+        final Graphics2D graphics2D = image.createGraphics();
+        graphics2D.drawImage(img, 0, 0, dw);
+        int i = 1;
+        for(final Rect matt : mat) {
             graphics2D.setStroke(new BasicStroke(3));
             graphics2D.setColor(Color.GREEN);
             graphics2D.drawRect(matt.x, matt.y, matt.width, matt.height);
+            graphics2D.setFont(new Font("TimesRoman", Font.PLAIN, 20));
+            graphics2D.drawString(String.valueOf(i), matt.x, matt.y);
+            i++;
         }
         graphics2D.dispose ();
         ImageIO.write(image, "png", new File("tagged-faces.png"));
         File f = new File(ResourceUtil.getResourcePath("tagged-faces.png"));
         BufferedImage savedImg = ImageIO.read(f);
 
-        dw.setupNewWindow();
-        dw.setBackgroundImage(savedImg);
         f.deleteOnExit();
+        return savedImg;
     }
 }
